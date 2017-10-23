@@ -1,0 +1,43 @@
+
+aes414, 0, Have results/direct_inner_versus_k.pdf, FAIL
+aes414, 1, Have results/direct_outer_time_versus_p.pdf, FAIL
+aes414, 2, Have results/direct_outer_strong_scaling.pdf, FAIL
+aes414, 3, Have results/direct_outer_strong_scaling.pdf, FAIL
+aes414, 4, Have results/fast_fourier_time_vs_recursion_k.pdf, FAIL
+aes414, 5, Have results/fast_fourier_recursion_versus_iteration.pdf, FAIL
+aes414, 6, Have src/aes414/direct_fourier_transform_parfor_inner.cpp, FAIL
+aes414, 7, Have src/aes414/direct_fourier_transform_parfor_outer.cpp, FAIL
+aes414, 8, Have src/aes414/fast_fourier_transform_taskgroup.cpp, FAIL
+aes414, 9, Have src/aes414/fast_fourier_transform_parfor.cpp, FAIL
+aes414, 10, Have src/aes414/fast_fourier_transform_combined.cpp, FAIL
+aes414, 11, Have src/fourier_transform_register_factories.cpp, PASS
+Overwriting files in src directory (except for registry)
+aes414, 12, Can build test_fourier_transform, FAIL
+aes414, 13, Can build time_fourier_transform, FAIL
+aes414, 14, Checking test_fourier_transform still lists 'hpce.direct_fourier_transform', FAIL
+aes414, 15, Checking test_fourier_transform still lists 'hpce.fast_fourier_transform', FAIL
+aes414, 16, Checking test_fourier_transform now lists 'hpce.aes414.direct_fourier_transform_parfor_inner', FAIL
+aes414, 17, Checking test_fourier_transform now lists 'hpce.aes414.direct_fourier_transform_parfor_outer', FAIL
+aes414, 18, Checking test_fourier_transform now lists 'hpce.aes414.fast_fourier_transform_parfor', FAIL
+aes414, 19, Checking test_fourier_transform now lists 'hpce.aes414.fast_fourier_transform_taskgroup', FAIL
+aes414, 20, Checking test_fourier_transform now lists 'hpce.aes414.fast_fourier_transform_combined', FAIL
+aes414, 21, Checking direct_fourier_transform_parfor_inner.cpp calls parallel_for at some point., FAIL
+aes414, 22, Checking direct_fourier_transform_parfor_inner.cpp uses partitioner., FAIL
+aes414, 23, Checking direct_fourier_transform_parfor_outer.cpp calls parallel_for at some point., FAIL
+aes414, 24, Checking fast_fourier_transform_taskgroup.cpp uses task groups at some point., FAIL
+aes414, 25, Checking direct_fourier_transform_parfor.cpp uses parallel_for at some point., FAIL
+aes414, 26, Checking direct_fourier_transform_combined.cpp uses parallel_for., FAIL
+aes414, 27, Checking direct_fourier_transform_combined.cpp also uses task_group., FAIL
+aes414, 28, Testing direct_fourier_transform_parfor_inner (using external tester), every test should pass., FAIL
+aes414, 29, Testing direct_fourier_transform_parfor_outer (using external tester), every test should pass., FAIL
+aes414, 30, Testing fast_fourier_transform_taskgroup (using external tester), every test should pass., FAIL
+aes414, 31, Testing fast_fourier_transform_parfor (using external tester), every test should pass., FAIL
+aes414, 32, Testing fast_fourier_transform_combined (using external tester), every test should pass., FAIL
+aes414, 33, Timing hpce.aes414.fast_fourier_transform_taskgroup with 4 CPUs and n=2^20: check observed parallelism (totalTime/wallTime) of is more than 2.5., FAIL
+aes414, 34, Timing hpce.aes414.fast_fourier_transform_parfor with 4 CPUs and n=2^24: check observed parallelism (totalTime/wallTime) of is more than 1.1., FAIL
+aes414, 35, Timing hpce.aes414.fast_fourier_transform_combined with 4 CPUs and n=2^20: check observed parallelism (totalTime/wallTime) of is more than 2.5., FAIL
+aes414, 36, For 4 CPUs, n=2^12, direct: check time for serial (CommandFailed) is greater than parfor (CommandFailed)., FAIL
+aes414, 37, For 4 CPUs, n=2^22, fast: check time for serial (CommandFailed) is at least 2x that of taskgroup (CommandFailed)., FAIL
+aes414, 38, For 4 CPUs, n=2^22, fast: check time for parfor (CommandFailed) is at least 1.5x that of combined (CommandFailed)., FAIL
+
+Passed 1 out of 39 tests.
