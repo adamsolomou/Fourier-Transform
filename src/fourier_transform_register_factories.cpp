@@ -7,11 +7,15 @@ std::shared_ptr<fourier_transform> Create_fast_fourier_transform();
 std::shared_ptr<fourier_transform> Create_direct_fourier_transform();
 
 // TODO : Declare your factories here
-/*
-namespace YOUR_LOGIN{
+
+namespace aes414{
 	std::shared_ptr<fourier_transform> Create_direct_fourier_transform_parfor_inner();
-}
-*/
+	std::shared_ptr<fourier_transform> Create_direct_fourier_transform_parfor_outer();
+	std::shared_ptr<fourier_transform> Create_fast_fourier_transform_taskgroup(); 
+	std::shared_ptr<fourier_transform> Create_fast_fourier_transform_parfor();
+	std::shared_ptr<fourier_transform> Create_fast_fourier_transform_combined(); 
+};
+
 
 void fourier_transform::RegisterDefaultFactories()
 {
@@ -21,7 +25,12 @@ void fourier_transform::RegisterDefaultFactories()
 	RegisterTransformFactory("hpce.direct_fourier_transform", Create_direct_fourier_transform);
 
 	// TODO : Add your factories here
-	// e.g. RegisterTransformFactory("hpce.YOUR_LOGIN.direct_fourier_transform_parfor_inner", hpce::YOUR_LOGIN::Create_direct_fourier_transform_parfor_inner);
+	RegisterTransformFactory("hpce.aes414.direct_fourier_transform_parfor_inner", hpce::aes414::Create_direct_fourier_transform_parfor_inner);
+	RegisterTransformFactory("hpce.aes414.direct_fourier_transform_parfor_outer", hpce::aes414::Create_direct_fourier_transform_parfor_outer);
+	RegisterTransformFactory("hpce.aes414.fast_fourier_transform_taskgroup", hpce::aes414::Create_fast_fourier_transform_taskgroup);
+	RegisterTransformFactory("hpce.aes414.fast_fourier_transform_parfor", hpce::aes414::Create_fast_fourier_transform_parfor);
+	RegisterTransformFactory("hpce.aes414.fast_fourier_transform_combined", hpce::aes414::Create_fast_fourier_transform_combined);
+
 }
 
 }; // namespace hpce
