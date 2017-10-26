@@ -144,7 +144,7 @@ public:
 		char *v_loop = getenv("HPCE_FFT_LOOP_K"); 
 		if (v_loop==NULL){
 			printf("HPCE_FFT_LOOP_K is not set .\n");
-			loop_K = 32; //set default value
+			loop_K = 16; //set default value
 		}else{
 			printf("HPCE_FFT_LOOP_K = %s\n", v_loop);
 			loop_K = atoi(v_loop); //convert string to integer
@@ -153,7 +153,7 @@ public:
 		char *v_rec = getenv("HPCE_FFT_RECURSION_K");
 		if (v_rec==NULL){
 			printf("HPCE_FFT_RECURSION_K is not set .\n");
-			recursion_K = 16; //set default value 
+			recursion_K = 32; //set default value 
 		}else{
 			printf("HPCE_FFT_RECURSION_K = %s\n", v_rec);
 			recursion_K = atoi(v_rec); //convert string to integer 

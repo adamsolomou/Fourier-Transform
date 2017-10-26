@@ -116,7 +116,7 @@ public:
 		char *v=getenv("HPCE_FFT_LOOP_K");
 		if(v==NULL){
 			printf("HPCE_FFT_LOOP_K is not set .\n");
-			K=32; //set default chunk size
+			K=16; //set default chunk size
 		}else{
 			printf("HPCE_FFT_LOOP_K = %s\n", v);
 			K=atoi(v); //convert string to integer

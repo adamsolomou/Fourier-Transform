@@ -118,7 +118,7 @@ public:
 		char *v=getenv("HPCE_FFT_RECURSION_K"); 
 		if (v==NULL){
 			printf("HPCE_FFT_RECURSION_K is not set .\n");
-			K=16; //set a default chunk size 
+			K=32; //set a default chunk size 
 		}else{
 			printf("HPCE_FFT_RECURSION_K = %s\n", v);
 			K=atoi(v); //convert string to integer

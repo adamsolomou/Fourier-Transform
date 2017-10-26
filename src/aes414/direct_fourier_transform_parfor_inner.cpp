@@ -42,7 +42,7 @@
 			char *v=getenv("HPCE_DIRECT_INNER_K");
 			if (v==NULL){
 				//printf("HPCE_DIRECT_INNER_K is not set .\n");
-				K=8; //set default chunk size
+				K=12; //set default chunk size
 			}else{
 				//printf("HPCE_DIRECT_INNER_K = %s\n", v);
 				K=atoi(v); //convert string to integer
@@ -79,7 +79,7 @@
 			char *v=getenv("HPCE_DIRECT_INNER_K");
 			if (v==NULL){
 				//printf("HPCE_DIRECT_INNER_K is not set .\n");
-				K=8; //set default chunk size to 8
+				K=12; //set default chunk size to 8
 			}else{
 				//printf("HPCE_DIRECT_INNER_K = %s\n", v);
 				K=atoi(v); //convert string to integer
