@@ -40,31 +40,38 @@ protected:
 	{
 		assert(n>0);
 
-		//Create parallel work 
-		if (n>recursion_K){
-			//Create a group 
-			tbb::task_group group; 
+		if (n == 1){
+			pOut[0] = pIn[0];
+		}else if (n == 2){
+			pOut[0] = pIn[0]+pIn[sIn];
+			pOut[sOut] = pIn[0]-pIn[sIn];
+		}else{
+			size_t m = n/2;
 
-			size_t m = n/2; 
-			group.run( [&](){ recurse(m,wn*wn,pIn,2*sIn,pOut,sOut); } );
-			group.run( [&](){ recurse(m,wn*wn,pIn+sIn,2*sIn,pOut+sOut*m,sOut); } );
-			group.wait(); 
+			//Create parallel work
+			if (n>recursion_K){
+				tbb::task_group group; 
+				group.run( [&](){ recurse(m,wn*wn,pIn,2*sIn,pOut,sOut); } );
+				group.run( [&](){ recurse(m,wn*wn,pIn+sIn,2*sIn,pOut+sOut*m,sOut); } );
+				group.wait(); 
+			}else{ //Run sequential version
+				recurse(m,wn*wn,pIn,2*sIn,pOut,sOut);
+				recurse(m,wn*wn,pIn+sIn,2*sIn,pOut+sOut*m,sOut);
+			}
 
-
-			if (m<=loop_K){ //use sequential version of for loop 
-				complex_t w=complex_t(1, 0);
+			if(m<=loop_K){ //use original code
+				complex_t w=complex_t(1,0);
 				for (size_t j=0;j<m;j++){
-			  		complex_t t1 = w*pOut[m+j];
-				  	complex_t t2 = pOut[j]-t1;
-				  	pOut[j] = pOut[j]+t1;                 /*  pOut[j] = pOut[j] + w^i pOut[m+j] */
-				  	pOut[j+m] = t2;                          /*  pOut[j] = pOut[j] - w^i pOut[m+j] */
-				  	w = w*wn;
+				 	 complex_t t1 = w*pOut[m+j];
+				 	 complex_t t2 = pOut[j]-t1;
+				 	 pOut[j] = pOut[j]+t1;                 /*  pOut[j] = pOut[j] + w^i pOut[m+j] */
+				 	 pOut[j+m] = t2;                          /*  pOut[j] = pOut[j] - w^i pOut[m+j] */
+				 	 w = w*wn;
 				}
-			}else{ //use parallel version of for loop 
-				//Execute chunks in parallel 
+			}else{ //use parallel version
 				tbb::parallel_for(tbb::blocked_range<unsigned>(0,m,loop_K), [&](const tbb::blocked_range<unsigned> &chunk){
 					complex_t w=complex_t(1, 0);
-					w = std::pow(wn, chunk.begin()); //skip wn ahead to wn^i
+					w = std::pow(wn,chunk.begin());
 					for(unsigned j=chunk.begin(); j!=chunk.end(); j++){
 						complex_t t1 = w*pOut[m+j];
 						complex_t t2 = pOut[j]-t1; 
@@ -73,41 +80,6 @@ protected:
 						w = w*wn; 
 					}
 				}, tbb::simple_partitioner()); //outer chunk loop 
-			}
-		}else{ //run sequential version 
-			if (n == 1){
-				pOut[0] = pIn[0];
-			}else if (n == 2){
-				pOut[0] = pIn[0]+pIn[sIn];
-				pOut[sOut] = pIn[0]-pIn[sIn];
-			}else{
-				size_t m = n/2;
-
-				recurse(m,wn*wn,pIn,2*sIn,pOut,sOut);
-				recurse(m,wn*wn,pIn+sIn,2*sIn,pOut+sOut*m,sOut);
-
-				if(m<=loop_K){
-					complex_t w=complex_t(1,0);
-					for (size_t j=0;j<m;j++){
-					 	 complex_t t1 = w*pOut[m+j];
-					 	 complex_t t2 = pOut[j]-t1;
-					 	 pOut[j] = pOut[j]+t1;                 /*  pOut[j] = pOut[j] + w^i pOut[m+j] */
-					 	 pOut[j+m] = t2;                          /*  pOut[j] = pOut[j] - w^i pOut[m+j] */
-					 	 w = w*wn;
-					}
-				}else{
-					tbb::parallel_for(tbb::blocked_range<unsigned>(0,m,loop_K), [&](const tbb::blocked_range<unsigned> &chunk){
-						complex_t w=complex_t(1, 0);
-						w = std::pow(wn,chunk.begin());
-						for(unsigned j=chunk.begin(); j!=chunk.end(); j++){
-							complex_t t1 = w*pOut[m+j];
-							complex_t t2 = pOut[j]-t1; 
-							pOut[j] = pOut[j]+t1; 
-							pOut[j+m] = t2; 
-							w = w*wn; 
-						}
-					}, tbb::simple_partitioner()); //outer chunk loop 
-				}
 			}
 		}
 	}
@@ -143,19 +115,15 @@ public:
 	{
 		char *v_loop = getenv("HPCE_FFT_LOOP_K"); 
 		if (v_loop==NULL){
-			printf("HPCE_FFT_LOOP_K is not set .\n");
 			loop_K = 16; //set default value
 		}else{
-			printf("HPCE_FFT_LOOP_K = %s\n", v_loop);
 			loop_K = atoi(v_loop); //convert string to integer
 		}
 
 		char *v_rec = getenv("HPCE_FFT_RECURSION_K");
 		if (v_rec==NULL){
-			printf("HPCE_FFT_RECURSION_K is not set .\n");
 			recursion_K = 32; //set default value 
 		}else{
-			printf("HPCE_FFT_RECURSION_K = %s\n", v_rec);
 			recursion_K = atoi(v_rec); //convert string to integer 
 		}
 	}

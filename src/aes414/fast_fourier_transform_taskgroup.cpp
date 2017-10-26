@@ -38,50 +38,34 @@ protected:
 	{	
 		assert(n>0);
 
-		//Create parallel work
-		if (n>K){
-			//Create a group
-			tbb::task_group group; 
+		if (n == 1){
+			pOut[0] = pIn[0];
+		}else if (n == 2){
+			pOut[0] = pIn[0]+pIn[sIn];
+			pOut[sOut] = pIn[0]-pIn[sIn];
+		}else{
+			size_t m = n/2;
+			//Create parallel work 
+			if (n>K){
+				tbb::task_group group; 
 
-			size_t l = n/2; 
-			group.run( [&](){ recurse(l,wn*wn,pIn,2*sIn,pOut,sOut); } );
-			group.run( [&](){ recurse(l,wn*wn,pIn+sIn,2*sIn,pOut+sOut*l,sOut); } );
-			group.wait(); 
+				group.run( [&](){ recurse(m,wn*wn,pIn,2*sIn,pOut,sOut); } );
+				group.run( [&](){ recurse(m,wn*wn,pIn+sIn,2*sIn,pOut+sOut*m,sOut); } );
+				group.wait();
+			}else{ //run sequential version 
+				recurse(m,wn*wn,pIn,2*sIn,pOut,sOut);
+				recurse(m,wn*wn,pIn+sIn,2*sIn,pOut+sOut*m,sOut);
+			}
 
 			complex_t w=complex_t(1, 0);
 
-			for (size_t j=0;j<l;j++){
-			  complex_t t1 = w*pOut[l+j];
-			  complex_t t2 = pOut[j]-t1;
-			  pOut[j] = pOut[j]+t1;                 /*  pOut[j] = pOut[j] + w^i pOut[m+j] */
-			  pOut[j+l] = t2;                          /*  pOut[j] = pOut[j] - w^i pOut[m+j] */
-			  w = w*wn;
+			for (size_t j=0;j<m;j++){
+				 complex_t t1 = w*pOut[m+j];
+			  	 complex_t t2 = pOut[j]-t1;
+				 pOut[j] = pOut[j]+t1;                 /*  pOut[j] = pOut[j] + w^i pOut[m+j] */
+				 pOut[j+m] = t2;                          /*  pOut[j] = pOut[j] - w^i pOut[m+j] */
+				 w = w*wn;
 			}
-
-		}else{ //run sequential recursion 
-
-			if (n == 1){
-				pOut[0] = pIn[0];
-			}else if (n == 2){
-				pOut[0] = pIn[0]+pIn[sIn];
-				pOut[sOut] = pIn[0]-pIn[sIn];
-			}else{
-				size_t m = n/2;
-
-				recurse(m,wn*wn,pIn,2*sIn,pOut,sOut);
-				recurse(m,wn*wn,pIn+sIn,2*sIn,pOut+sOut*m,sOut);
-
-				complex_t w=complex_t(1, 0);
-
-				for (size_t j=0;j<m;j++){
-				  complex_t t1 = w*pOut[m+j];
-				  complex_t t2 = pOut[j]-t1;
-				  pOut[j] = pOut[j]+t1;                 /*  pOut[j] = pOut[j] + w^i pOut[m+j] */
-				  pOut[j+m] = t2;                          /*  pOut[j] = pOut[j] - w^i pOut[m+j] */
-				  w = w*wn;
-				}
-			}
-
 		}
 	}
 
@@ -117,10 +101,8 @@ public:
 		//Read enviromental variable 
 		char *v=getenv("HPCE_FFT_RECURSION_K"); 
 		if (v==NULL){
-			printf("HPCE_FFT_RECURSION_K is not set .\n");
 			K=32; //set a default chunk size 
 		}else{
-			printf("HPCE_FFT_RECURSION_K = %s\n", v);
 			K=atoi(v); //convert string to integer
 		}
 	}	
